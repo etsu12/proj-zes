@@ -7,16 +7,17 @@ import os
 
 @app.route('/')
 def home():
-    return "Home page of the shop"
+    return render_template('admin/index.html', title="Strona administracyjna")
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route('/rejestracja', methods=['GET', 'POST'])
+def rejestruj():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
         hash_password = bcrypt.generate_password_hash(form.password.data)
         user = User(username=form.username.data, email=form.email.data,
                      password=hash_password)
         db.session.add(user)
-        flash('Dziękujemy za rejestrację')
+        db.session.commit()
+        flash(f'Dziękujemy za rejestrację, {form.username.data}','success')
         return redirect(url_for('home'))
     return render_template('admin/rejestracja.html', form=form, title="Rejestracja")
