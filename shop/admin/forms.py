@@ -8,3 +8,7 @@ class RegistrationForm(Form):
         validators.EqualTo('confirm', message='Hasła muszą się zgadzać')
     ])
     confirm = PasswordField('Powtórz hasło')
+
+class LoginForm(Form):
+    email = StringField('Adres e-mail', [validators.Length(min=6, max=35, message="Pole musi zawierać minimalnie 6 znaków, a maksymalnie 35."), validators.Email("Niepoprawny adres email")])
+    password = PasswordField('Hasło', [validators.DataRequired()])
