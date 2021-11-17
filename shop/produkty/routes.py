@@ -1,6 +1,7 @@
 from flask import redirect, render_template, url_for, flash, request
 from shop import db, app
 from .models import Marka, Kategoria
+from .forms import dodajProdukty
 
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():
@@ -25,3 +26,11 @@ def dodajkategorie():
         return redirect(url_for('dodajmarke'))
 
     return render_template('produkty/dodajmarke.html')
+
+@app.route('/dodajprodukt', methods=['GET','POST'])
+def dodajprodukt():
+    marki = Marka.query.all()
+    kategorie = Kategoria.query.all()
+
+    form = dodajProdukty(request.form)
+    return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)
