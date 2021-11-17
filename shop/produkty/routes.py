@@ -1,7 +1,8 @@
 from flask import redirect, render_template, url_for, flash, request
-from shop import db, app
+from shop import db, app, photos
 from .models import Marka, Kategoria
 from .forms import dodajProdukty
+import secrets
 
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():
@@ -31,6 +32,9 @@ def dodajkategorie():
 def dodajprodukt():
     marki = Marka.query.all()
     kategorie = Kategoria.query.all()
-
     form = dodajProdukty(request.form)
+    if request.method == "POST":
+        photos.save(request.files.get('zdjecie_1'), name=secrets.token_hex(10) + ".")
+        photos.save(request.files.get('zdjecie_2'), name=secrets.token_hex(10) + ".")
+        photos.save(request.files.get('zdjecie_3'), name=secrets.token_hex(10) + ".")
     return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)
