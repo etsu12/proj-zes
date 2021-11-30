@@ -1,6 +1,6 @@
 from flask import redirect, render_template, url_for, flash, request
 from shop import db, app, photos
-from .models import Marka, Kategoria
+from .models import Marka, Kategoria, dodajProdukt
 from .forms import dodajProdukty
 import secrets
 
@@ -34,7 +34,23 @@ def dodajprodukt():
     kategorie = Kategoria.query.all()
     form = dodajProdukty(request.form)
     if request.method == "POST":
-        photos.save(request.files.get('zdjecie_1'), name=secrets.token_hex(10) + ".")
-        photos.save(request.files.get('zdjecie_2'), name=secrets.token_hex(10) + ".")
-        photos.save(request.files.get('zdjecie_3'), name=secrets.token_hex(10) + ".")
+        nazwa = form.nazwa.data
+        cena = form.cena.data
+        znizka = form.znizka.data
+        ilosc = form.ilosc.data
+        kolory = form.kolory.data
+        opis = form.opis.data
+        marka = request.form.get('marka')
+        kategoria = request.form.get('kategoria')
+        zdjecie_1 = photos.save(request.files.get('zdjecie_1'), name=secrets.token_hex(10) + ".")
+        zdjecie_2 = photos.save(request.files.get('zdjecie_2'), name=secrets.token_hex(10) + ".")
+        zdjecie_3 = photos.save(request.files.get('zdjecie_3'), name=secrets.token_hex(10) + ".")
+
+        dodajpro = dodajProdukt(nazwa=nazwa, cena=cena, znizka=znizka, ilosc=ilosc, kolory=kolory, opis=opis, marka_id=marka, kategoria_id=kategoria, zdjecie_1=zdjecie_1, 
+        zdjecie_2=zdjecie_2, zdjecie_3=zdjecie_3)
+        db.session.add(dodajpro)
+        flash(f'Produkt {nazwa} został dodany do bazy.', 'success')
+        db.session.commit()
+        return redirect(url_for('admin'))
+
     return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)
