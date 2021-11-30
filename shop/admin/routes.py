@@ -3,18 +3,16 @@ from flask import render_template, session, request, redirect, url_for, flash
 from shop import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from .models import User
+from shop.produkty.models import dodajProdukt
 import os
 
 @app.route('/')
-def home():
-    return render_template('admin/index.html', title="Strona administracyjna")
-
-@app.route('/admin')
 def admin():
     if 'email' not in session:
         flash(f'Proszę się zalogować.','danger')
         return redirect(url_for('login'))
-    return render_template('admin/index.html', title="Strona administracyjna")
+    produkty = dodajProdukt.query.all()
+    return render_template('admin/index.html', title="Strona administracyjna", produkty=produkty)
 
 @app.route('/rejestracja', methods=['GET','POST'])
 def rejestruj():

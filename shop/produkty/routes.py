@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for, flash, request
+from flask import redirect, render_template, url_for, flash, request, session
 from shop import db, app, photos
 from .models import Marka, Kategoria, dodajProdukt
 from .forms import dodajProdukty
@@ -6,6 +6,9 @@ import secrets
 
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():
+    if 'email' not in session:
+        flash(f'Proszę się zalogować.','danger')
+        return redirect(url_for('login'))
     if request.method == "POST":
         getmarka = request.form.get('marka')
         marka = Marka(name=getmarka)
@@ -18,6 +21,9 @@ def dodajmarke():
 
 @app.route('/dodajkategorie', methods=['GET','POST'])
 def dodajkategorie():
+    if 'email' not in session:
+        flash(f'Proszę się zalogować.','danger')
+        return redirect(url_for('login'))
     if request.method == "POST":
         getkategoria = request.form.get('kategoria')
         kategoria = Kategoria(name=getkategoria)
@@ -30,6 +36,9 @@ def dodajkategorie():
 
 @app.route('/dodajprodukt', methods=['GET','POST'])
 def dodajprodukt():
+    if 'email' not in session:
+        flash(f'Proszę się zalogować.','danger')
+        return redirect(url_for('login'))
     marki = Marka.query.all()
     kategorie = Kategoria.query.all()
     form = dodajProdukty(request.form)
