@@ -16,8 +16,23 @@ def dodajmarke():
         flash(f'Marka {getmarka} została dodana do bazy.', 'success')
         db.session.commit()
         return redirect(url_for('dodajmarke'))
-
     return render_template('produkty/dodajmarke.html',marki='marki')
+
+@app.route('/aktualizujmarke/<int:id>', methods=['GET','POST'])
+def aktualizujmarke(id):
+    if 'email' not in session:
+        flash(f'Proszę się zalogować.','danger')
+        return redirect(url_for('login'))
+
+    aktualizujmarke = Marka.query.get_or_404(id)
+    marka = request.form.get('marka')
+    if request.method=="POST":
+        aktualizujmarke.name = marka
+        flash(f'Marka została zaktualizowana', 'success')
+        db.session.commit()
+        return redirect(url_for('marki'))
+
+    return render_template('produkty/aktualizujmarke.html', title='Aktualizacja marki', aktualizujmarke = aktualizujmarke)
 
 @app.route('/dodajkategorie', methods=['GET','POST'])
 def dodajkategorie():
@@ -31,8 +46,23 @@ def dodajkategorie():
         flash(f'Kategoria {getkategoria} została dodana do bazy.', 'success')
         db.session.commit()
         return redirect(url_for('dodajmarke'))
-
     return render_template('produkty/dodajmarke.html')
+
+@app.route('/aktualizujkategorie/<int:id>', methods=['GET','POST'])
+def aktualizujkategorie(id):
+    if 'email' not in session:
+        flash(f'Proszę się zalogować.','danger')
+        return redirect(url_for('login'))
+
+    aktualizujkategorie = Kategoria.query.get_or_404(id)
+    kategoria = request.form.get('kategoria')
+    if request.method=="POST":
+        aktualizujkategorie.name = kategoria
+        flash(f'Kategoria została zaktualizowana', 'success')
+        db.session.commit()
+        return redirect(url_for('kategorie'))
+
+    return render_template('produkty/aktualizujmarke.html', title='Aktualizacja kategorii', aktualizujkategorie = aktualizujkategorie)
 
 @app.route('/dodajprodukt', methods=['GET','POST'])
 def dodajprodukt():
@@ -61,5 +91,4 @@ def dodajprodukt():
         flash(f'Produkt {nazwa} został dodany do bazy.', 'success')
         db.session.commit()
         return redirect(url_for('admin'))
-
     return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)

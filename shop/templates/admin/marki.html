@@ -49,7 +49,7 @@
             <tr>
                 <td>{{loop.index}}</td>
                 <td>{{marka.name}}</td>
-                <td><a href="" class="btn btn-sm btn-outline-info">Edytuj</a></td>
+                <td><a href="{{url_for('aktualizujmarke', id=marka.id)}}" class="btn btn-sm btn-outline-info">Edytuj</a></td>
                 <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
             </tr>
             {% endfor %}
@@ -58,7 +58,7 @@
             <tr>
                 <td>{{loop.index}}</td>
                 <td>{{kategoria.name}}</td>
-                <td><a href="" class="btn btn-sm btn-outline-info">Edytuj</a></td>
+                <td><a href="{{url_for('aktualizujkategorie', id=kategoria.id)}}" class="btn btn-sm btn-outline-info">Edytuj</a></td>
                 <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
             </tr>
             {% endfor %}
