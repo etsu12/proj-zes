@@ -12,14 +12,14 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/marki">Marki</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/kategorie">Kategorie</a>
-              </li>
+              <a class="nav-link" href="/marki">Marki</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/kategorie">Kategorie</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Dropdown link
@@ -36,30 +36,33 @@
 </div>
 
 <div class="container mt-5">
-    <table class="table table-sm table-condensed table-striped">
+    <table class="table table-sm table-condensed table-striped table-hover">
         <thead>
             <th>Nr seryjny</th>
             <th>Nazwa</th>
-            <th>Cena</th>
-            <th>Zniżka</th>
-            <th>Marka</th>
-            <th>Zdjęcie</th>
             <th>Edytuj</th>
             <th>Usuń</th>
         </thead>
         <tbody>
-            {% for produkt in produkty %}
+            {% if marki %}
+            {% for marka in marki %}
             <tr>
                 <td>{{loop.index}}</td>
-                <td>{{produkt.nazwa}}</td>
-                <td>{{produkt.cena}}</td>
-                <td>{{produkt.znizka}}%</td>
-                <td>{{produkt.marka.name}}</td>
-                <td><img src="{{url_for('static', filename='images/' + produkt.zdjecie_1)}}" width="50" height="40"></td>
-                <td>Edytuj</td>
-                <td>Usuń</td>
+                <td>{{marka.name}}</td>
+                <td><a href="" class="btn btn-sm btn-outline-info">Edytuj</a></td>
+                <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
             </tr>
             {% endfor %}
+            {% else %}
+            {% for kategoria in kategorie %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{kategoria.name}}</td>
+                <td><a href="" class="btn btn-sm btn-outline-info">Edytuj</a></td>
+                <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>
