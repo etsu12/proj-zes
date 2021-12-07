@@ -1,8 +1,8 @@
-from flask import redirect, render_template, url_for, flash, request, session
+from flask import redirect, render_template, url_for, flash, request, session, current_app
 from shop import db, app, photos
 from .models import Marka, Kategoria, dodajProdukt
 from .forms import dodajProdukty
-import secrets
+import secrets, os
 
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():
@@ -109,6 +109,27 @@ def aktualizujprodukt(id):
         produkt.kategoria_id = kategoria
         produkt.kolory = form.kolory.data
         produkt.opis = form.opis.data
+        if request.files.get('zdjecie_1'):
+            try:
+                os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_1))
+                produkt.zdjecie_1 = photos.save(request.files.get('zdjecie_1'), name=secrets.token_hex(10) + ".")
+            except:
+                produkt.zdjecie_1 = photos.save(request.files.get('zdjecie_1'), name=secrets.token_hex(10) + ".")
+
+        if request.files.get('zdjecie_2'):
+            try:
+                os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_2))
+                produkt.zdjecie_2 = photos.save(request.files.get('zdjecie_2'), name=secrets.token_hex(10) + ".")
+            except:
+                produkt.zdjecie_2 = photos.save(request.files.get('zdjecie_2'), name=secrets.token_hex(10) + ".")
+
+        if request.files.get('zdjecie_3'):
+            try:
+                os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_3))
+                produkt.zdjecie_3 = photos.save(request.files.get('zdjecie_3'), name=secrets.token_hex(10) + ".")
+            except:
+                produkt.zdjecie_3 = photos.save(request.files.get('zdjecie_3'), name=secrets.token_hex(10) + ".")
+
         db.session.commit()
         flash(f'Produkt został zaktualizowany','success')
         return redirect('/admin')

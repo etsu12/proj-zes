@@ -9,6 +9,6 @@ class dodajProdukty(Form):
     opis = TextAreaField('Opis',[validators.DataRequired()])
     kolory = TextAreaField('Kolory',[validators.DataRequired()])
 
-    zdjecie_1 = FileField('Zdjęcie 1', validators=[FileRequired(), FileAllowed(['jpg','png','gif','jpeg'])])
-    zdjecie_2 = FileField('Zdjęcie 1', validators=[FileRequired(), FileAllowed(['jpg','png','gif','jpeg'])])
-    zdjecie_3 = FileField('Zdjęcie 1', validators=[FileRequired(), FileAllowed(['jpg','png','gif','jpeg'])])
+    zdjecie_1 = FileField('Zdjęcie 1', validators=[FileAllowed(['jpg','png','gif','jpeg'])])
+    zdjecie_2 = FileField('Zdjęcie 1', validators=[FileAllowed(['jpg','png','gif','jpeg'])])
+    zdjecie_3 = FileField('Zdjęcie 1', validators=[FileAllowed(['jpg','png','gif','jpeg'])])
