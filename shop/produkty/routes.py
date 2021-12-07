@@ -92,3 +92,32 @@ def dodajprodukt():
         db.session.commit()
         return redirect(url_for('admin'))
     return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)
+
+@app.route('/aktualizujprodukt/<int:id>', methods=['GET','POST'])
+def aktualizujprodukt(id):
+    marki = Marka.query.all()
+    kategorie = Kategoria.query.all()
+    produkt = dodajProdukt.query.get_or_404(id)
+    marka = request.form.get('marka')
+    kategoria = request.form.get('kategoria')
+    form = dodajProdukty(request.form)
+    if request.method == "POST":
+        produkt.nazwa = form.nazwa.data
+        produkt.cena = form.cena.data
+        produkt.znizka = form.znizka.data
+        produkt.marka_id = marka
+        produkt.kategoria_id = kategoria
+        produkt.kolory = form.kolory.data
+        produkt.opis = form.opis.data
+        db.session.commit()
+        flash(f'Produkt został zaktualizowany','success')
+        return redirect('/admin')
+
+    form.nazwa.data = produkt.nazwa
+    form.cena.data = produkt.cena
+    form.znizka.data = produkt.znizka
+    form.ilosc.data = produkt.ilosc
+    form.kolory.data = produkt.kolory
+    form.opis.data = produkt.opis
+
+    return render_template('produkty/aktualizujprodukt.html', form=form, marki=marki, kategorie=kategorie, produkt=produkt)

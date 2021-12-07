@@ -56,8 +56,8 @@
                 <td>{{produkt.znizka}}%</td>
                 <td>{{produkt.marka.name}}</td>
                 <td><img src="{{url_for('static', filename='images/' + produkt.zdjecie_1)}}" width="50" height="40"></td>
-                <td>Edytuj</td>
-                <td>Usuń</td>
+                <td><a href="{{url_for('aktualizujprodukt', id=produkt.id)}}" class="btn btn-info btn-sm">Edytuj</a></td>
+                <td><a href="{{url_for('aktualizujprodukt', id=produkt.id)}}" class="btn btn-danger btn-sm">Usuń</a></td>
             </tr>
             {% endfor %}
         </tbody>
