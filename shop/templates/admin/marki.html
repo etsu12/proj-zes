@@ -50,8 +50,36 @@
                 <td>{{loop.index}}</td>
                 <td>{{marka.name}}</td>
                 <td><a href="{{url_for('aktualizujmarke', id=marka.id)}}" class="btn btn-sm btn-outline-info">Edytuj</a></td>
-                <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
+                <td>
+                  <!-- <a href="" class="btn btn-sm btn-outline-danger">Usuń</a> -->
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{marka.id}}">
+                    Usuń
+                  </button>
+                </td>
             </tr>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal-{{marka.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{marka.name}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <span class="text-danger">Czy jesteś pewien, że chcesz usunąć markę {{marka.name}}?</span>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Anuluj</button>
+                    <form action="{{url_for('usunmarke', id=marka.id)}}" method="POST">
+                      <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             {% endfor %}
             {% else %}
             {% for kategoria in kategorie %}
@@ -59,8 +87,35 @@
                 <td>{{loop.index}}</td>
                 <td>{{kategoria.name}}</td>
                 <td><a href="{{url_for('aktualizujkategorie', id=kategoria.id)}}" class="btn btn-sm btn-outline-info">Edytuj</a></td>
-                <td><a href="" class="btn btn-sm btn-outline-danger">Usuń</a></td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{kategoria.id}}">
+                    Usuń
+                  </button>
+                </td>
             </tr>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal-{{kategoria.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{kategoria.name}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <span class="text-danger">Czy jesteś pewien, że chcesz usunąć kategorię {{kategoria.name}}?</span>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Anuluj</button>
+                    <form action="{{url_for('usunkategorie', id=kategoria.id)}}" method="POST">
+                      <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {% endfor %}
             {% endif %}
         </tbody>

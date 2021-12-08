@@ -34,6 +34,17 @@ def aktualizujmarke(id):
 
     return render_template('produkty/aktualizujmarke.html', title='Aktualizacja marki', aktualizujmarke = aktualizujmarke)
 
+@app.route('/usunmarke/<int:id>', methods=['POST'])
+def usunmarke(id):
+    marka = Marka.query.get_or_404(id)
+    if request.method == "POST":
+        db.session.delete(marka)
+        db.session.commit()
+        flash(f'Marka {marka.name} została usunięta z bazy', 'success')
+        return redirect(url_for('admin'))
+    flash(f'Marka {marka.name} nie może zostać usunięta', 'warning')
+    return redirect(url_for('admin'))
+
 @app.route('/dodajkategorie', methods=['GET','POST'])
 def dodajkategorie():
     if 'email' not in session:
@@ -63,6 +74,17 @@ def aktualizujkategorie(id):
         return redirect(url_for('kategorie'))
 
     return render_template('produkty/aktualizujmarke.html', title='Aktualizacja kategorii', aktualizujkategorie = aktualizujkategorie)
+
+@app.route('/usunkategorie/<int:id>', methods=['POST'])
+def usunkategorie(id):
+    kategoria = Kategoria.query.get_or_404(id)
+    if request.method == "POST":
+        db.session.delete(kategoria)
+        db.session.commit()
+        flash(f'Kategoria {kategoria.name} została usunięta z bazy', 'success')
+        return redirect(url_for('admin'))
+    flash(f'Kategoria {kategoria.name} nie może zostać usunięta', 'warning')
+    return redirect(url_for('admin'))
 
 @app.route('/dodajprodukt', methods=['GET','POST'])
 def dodajprodukt():
