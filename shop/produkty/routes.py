@@ -4,6 +4,11 @@ from .models import Marka, Kategoria, dodajProdukt
 from .forms import dodajProdukty
 import secrets, os
 
+@app.route('/')
+def home():
+    produkty = dodajProdukt.query.filter(dodajProdukt.ilosc > 0)
+    return render_template('produkty/index.html', produkty=produkty)
+
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():
     if 'email' not in session:
