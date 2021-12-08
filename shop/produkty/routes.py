@@ -113,6 +113,7 @@ def dodajprodukt():
         flash(f'Produkt {nazwa} został dodany do bazy.', 'success')
         db.session.commit()
         return redirect(url_for('admin'))
+
     return render_template('produkty/dodajprodukt.html', title="Dodawanie produktu", form=form, marki=marki, kategorie=kategorie)
 
 @app.route('/aktualizujprodukt/<int:id>', methods=['GET','POST'])
@@ -164,3 +165,22 @@ def aktualizujprodukt(id):
     form.opis.data = produkt.opis
 
     return render_template('produkty/aktualizujprodukt.html', form=form, marki=marki, kategorie=kategorie, produkt=produkt)
+
+@app.route('/usunprodukt/<int:id>', methods=['POST'])
+def usunprodukt(id):
+    produkt = dodajProdukt.query.get_or_404(id)
+    if request.method == "POST":
+        try:
+             os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_1))
+             os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_2))
+             os.unlink(os.path.join(current_app.root_path, "static/images/" + produkt.zdjecie_3))
+        except Exception as e:
+              print(e)
+
+        db.session.delete(produkt)
+        db.session.commit()
+        flash(f'Produkt ({produkt.nazwa}) został usunięty', 'success')
+        return redirect(url_for('admin'))
+    flash(f'Produkt ({produkt.nazwa}) nie może zostać usunięty')
+
+    return redirect(url_for('admin'))
