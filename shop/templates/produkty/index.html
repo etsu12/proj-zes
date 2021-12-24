@@ -37,7 +37,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          <a class="nav-link disabled" href="#" tabindex="-1">Koszyk ({{session['Koszyk']|length}})</a>
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
@@ -64,7 +64,19 @@
                 <p class="text-center">{{m.cena}},-</p>
             </div>
             <div class="card-footer">
-                <a href="#" class="float-left btn btn-sm btn-primary">Szczegóły</a> <a href="#" class="float-right btn btn-sm btn-warning">Dodaj do koszyka</a>
+                <a href="{{url_for('single_page', id=m.id)}}" class="float-left btn btn-sm btn-primary">Szczegóły</a> 
+                <form action="{{url_for('DodajKoszyk')}}" method="post">
+                  <input type="hidden" name="produkt_id" value="{{m.id}}">
+                  <button type="submit" class="btn btn-sm btn-warning float-right">Dodaj do koszyka</button>
+                  <input type="hidden" name="ilosc" id="" value="1" min="1">
+                  {% set kolory = m.kolory.split(',') %}
+                  <select name="kolory" id="kolory" style="visibility: hidden;">
+                      {% for kolor in kolory %}
+                      {% set kol = kolor.split(':') %}
+                      <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                      {% endfor %}
+                  </select>
+              </form>
             </div>
         </div>
     </div>
@@ -109,7 +121,19 @@
               <p class="text-center">{{get_kategoria.cena}},-</p>
           </div>
           <div class="card-footer">
-              <a href="#" class="float-left btn btn-sm btn-primary">Szczegóły</a> <a href="#" class="float-right btn btn-sm btn-warning">Dodaj do koszyka</a>
+              <a href="{{url_for('single_page', id=get_kategoria.id)}}" class="float-left btn btn-sm btn-primary">Szczegóły</a> 
+              <form action="{{url_for('DodajKoszyk')}}" method="post">
+                <input type="hidden" name="produkt_id" value="{{get_kategoria.id}}">
+                <button type="submit" class="btn btn-sm btn-warning float-right">Dodaj do koszyka</button>
+                <input type="hidden" name="ilosc" id="" value="1" min="1">
+                {% set kolory = get_kategoria.kolory.split(',') %}
+                <select name="kolory" id="kolory" style="visibility: hidden;">
+                    {% for kolor in kolory %}
+                    {% set kol = kolor.split(':') %}
+                    <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                    {% endfor %}
+                </select>
+            </form>
           </div>
       </div>
   </div>
@@ -155,7 +179,19 @@
                     <p class="text-center">{{produkt.cena}},-</p>
                 </div>
                 <div class="card-footer">
-                    <a href="#" class="float-left btn btn-sm btn-primary">Szczegóły</a> <a href="#" class="float-right btn btn-sm btn-warning">Dodaj do koszyka</a>
+                    <a href="{{url_for('single_page', id=produkt.id)}}" class="float-left btn btn-sm btn-primary">Szczegóły</a> 
+                    <form action="{{url_for('DodajKoszyk')}}" method="post">
+                      <input type="hidden" name="produkt_id" value="{{produkt.id}}">
+                      <button type="submit" class="btn btn-sm btn-warning float-right">Dodaj do koszyka</button>
+                      <input type="hidden" name="ilosc" id="" value="1" min="1" max={{produkt.ilosc}}>
+                      {% set kolory = produkt.kolory.split(',') %}
+                      <select name="kolory" id="kolory" style="visibility: hidden;">
+                          {% for kolor in kolory %}
+                          {% set kol = kolor.split(':') %}
+                          <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                          {% endfor %}
+                      </select>
+                  </form>
                 </div>
             </div>
         </div>

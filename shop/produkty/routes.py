@@ -12,6 +12,13 @@ def home():
     kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
     return render_template('produkty/index.html', produkty=produkty, marki=marki, kategorie=kategorie)
 
+@app.route('/produkt/<int:id>')
+def single_page(id):
+    produkt = dodajProdukt.query.get_or_404(id)
+    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
+    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
+    return render_template('produkty/single_page.html', produkt=produkt, marki=marki, kategorie=kategorie)
+
 @app.route('/marka/<int:id>')
 def get_marka(id):
     get_m = Marka.query.filter_by(id=id).first_or_404()

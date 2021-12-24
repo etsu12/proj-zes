@@ -1,0 +1,107 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- navbar start -->
+<div class="container">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Strona główna</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Wszystkie produkty</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Marki
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for marka in marki %}
+            <a class="dropdown-item" href="{{url_for('get_marka', id = marka.id)}}">{{marka.name}}</a>
+            {% endfor %}
+          </div>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Kategorie
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for kategoria in kategorie %}
+            <a class="dropdown-item" href="{{url_for('get_kategoria', id = kategoria.id)}}">{{kategoria.name}}</a>
+            {% endfor %}
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#" tabindex="-1">Koszyk ({{session['Koszyk']|length}})</a>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</div>
+<!-- navbar koniec -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6" id = "m_zdjecie">
+            <img src="{{url_for('static', filename='images/' + produkt.zdjecie_1)}}" alt="{{produkt.nazwa}}" width="400" height="400">
+        </div>
+        <div class="col-md-6">
+            <h4>{{produkt.nazwa}}</h4>
+            <hr>
+            <p>Cena: {{produkt.cena}},-</p>
+            {% if produkt.znizka > 0 %}
+            <p>Zniżka: {{produkt.znizka}}%</p>
+            {% endif %}
+            <hr>
+            <b>Opis:</b>
+            <p>{{produkt.opis}}</p>
+            <hr>
+            <form action="{{url_for('DodajKoszyk')}}" method="post">
+                <input type="hidden" name="produkt_id" value="{{produkt.id}}">
+                <button type="submit" class="btn btn-sm btn-warning">Dodaj do koszyka</button>
+                <label for="">Ilość: </label>
+                <input type="number" name="ilosc" id="" value="1" min="1" max={{produkt.ilosc}}>
+                {% set kolory = produkt.kolory.split(',') %}
+                <label for="kolory">Kolory:</label>
+                <select name="kolory" id="">
+                    {% for kolor in kolory %}
+                    {% set kol = kolor.split(':') %}
+                    <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3" id = "sm_zdjecie">
+            <img src="{{url_for('static', filename='images/' + produkt.zdjecie_1)}}" alt="{{produkt.nazwa}}" width="120" height="120" class="p-3">
+            <img src="{{url_for('static', filename='images/' + produkt.zdjecie_2)}}" alt="{{produkt.nazwa}}" width="120" height="120" class="p-3">
+            <img src="{{url_for('static', filename='images/' + produkt.zdjecie_3)}}" alt="{{produkt.nazwa}}" width="120" height="120" class="p-3">
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var m_zdjecie = document.getElementById('m_zdjecie');
+    var sm_zdjecie = document.getElementById('sm_zdjecie').getElementsByTagName('img');
+     for(var i = 0; i < sm_zdjecie.length; i++){
+ 
+         sm_zdjecie[i].addEventListener('click', full_image);
+     }
+     function full_image(){
+         var ImageSRC = this.getAttribute('src');
+         sm_zdjecie.innerHTML = "<img src=" + ImageSRC + " width='400' height='400'>";
+     }
+ </script>
+
+{% endblock content %}
