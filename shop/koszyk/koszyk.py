@@ -34,3 +34,17 @@ def DodajKoszyk():
         print(e)
     finally:
         return redirect(request.referrer)
+
+@app.route('/koszyk')
+def getKoszyk():
+    if 'Koszyk' not in session:
+        return redirect(request.referrer)
+    suma = 0
+    lacznasuma = 0
+    for key, produkt in session['Koszyk'].items():
+        znizka = (produkt['znizka']/100) * float(produkt['cena']) * float(produkt['ilosc'])
+        suma += float(produkt['cena']) * int(produkt['ilosc'])
+        suma -= znizka
+        podatek = ("%.2f" % (.06 * float(suma)))
+        lacznasuma = float("%.2f" % (1.06 * suma))
+    return render_template('produkty/koszyk.html', podatek = podatek, lacznasuma = lacznasuma)

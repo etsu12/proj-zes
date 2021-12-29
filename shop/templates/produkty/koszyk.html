@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <table class="table table-sm">
+            <thead>
+                <th>Sr</th>
+                <th>Nazwa</th>
+                <th>Kolor</th>
+                <th>Cena</th>
+                <th>Ilość</th>
+                <th>Zniżka za całość</th>
+                <th>Suma</th>
+                <th>Edytuj</th>
+                <th>Usuń</th>
+            </thead>
+            <tbody>
+                {% for key , produkt in session['Koszyk'].items() %}
+                {% set znizka = "%0.2f" |format((produkt.znizka/100) * produkt.cena|float * produkt.ilosc|float) %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{produkt.nazwa}}</td>
+                    <td>{{produkt.kolory}}</td>
+                    <td>{{produkt.cena}},-</td>
+                    <td>{{produkt.ilosc}}</td>
+                    {% if produkt.znizka > 0 %}
+                    <td>{{produkt.znizka}}% &nbsp; = {{znizka}}</td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    {% set suma = produkt.ilosc|int * produkt.cena|float %}
+                    <td>{{"%0.2f"|format((suma|float) - znizka|float)}},-</td>
+                    <td><a href="#">Edytuj</a></td>
+                    <td><a href="#">Usuń</a></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td><a href="/">Kontynuuj zakupy</a></td>
+                    <td colspan="3"><h5>Podatek: {{podatek}}</h5></td>
+                    <td colspan="4"><h4>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{{lacznasuma}},-</h4></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
