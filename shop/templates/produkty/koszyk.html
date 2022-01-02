@@ -1,10 +1,15 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container">
+{% include 'navbar.html' %}
+
+<div class="container mt-4">
+    {% include '_messages.html' %}
     <div class="row">
+        <div class="col-md-12">
         <table class="table table-sm">
             <thead>
                 <th>Sr</th>
+                <th>Zdjęcie</th>
                 <th>Nazwa</th>
                 <th>Kolor</th>
                 <th>Cena</th>
@@ -19,10 +24,24 @@
                 {% set znizka = "%0.2f" |format((produkt.znizka/100) * produkt.cena|float * produkt.ilosc|float) %}
                 <tr>
                     <td>{{loop.index}}</td>
+                    <td><img src="{{url_for('static',filename='images/'+produkt.zdjecie)}}" alt="{{produkt.nazwa}}" width="50" height="45"></td>
                     <td>{{produkt.nazwa}}</td>
-                    <td>{{produkt.kolory}}</td>
+                    <form action="{{url_for('edytujkoszyk', code=key)}}" method="post">
+                    <td>
+                      {% set kolory = produkt.kolory.split(',') %}
+                      <label for="kolory">Kolory:</label>
+                      <select name="kolor" id="kolor">
+                          <option value="{{produkt.kolor}}" style="display: none;">{{produkt.kolor|capitalize}}</option>
+                         {% for kolor in kolory %}
+                         {% set kol = kolor.split(':') %}
+                         <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                         {% endfor %}
+                      </select>
+                        
+
+                    </td>
                     <td>{{produkt.cena}},-</td>
-                    <td>{{produkt.ilosc}}</td>
+                    <td><input type="number" name="ilosc" min="1" max="10" value="{{produkt.ilosc}}"></td>
                     {% if produkt.znizka > 0 %}
                     <td>{{produkt.znizka}}% &nbsp; = {{znizka}}</td>
                     {% else %}
@@ -30,7 +49,8 @@
                     {% endif %}
                     {% set suma = produkt.ilosc|int * produkt.cena|float %}
                     <td>{{"%0.2f"|format((suma|float) - znizka|float)}},-</td>
-                    <td><a href="#">Edytuj</a></td>
+                    <td><button type="submit" class="btn btn-sm btn-info">Edytuj</button></td>
+                </form>
                     <td><a href="#">Usuń</a></td>
                 </tr>
                 {% endfor %}
@@ -43,5 +63,6 @@
             </tbody>
         </table>
     </div>
+</div>
 </div>
 {% endblock content %}

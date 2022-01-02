@@ -18,7 +18,7 @@ def DodajKoszyk():
         kolory = request.form.get('kolory')
         produkt = dodajProdukt.query.filter_by(id=produkt_id).first()
         if produkt_id and ilosc and kolory and request.method == "POST":
-            SlownikPrzedmioty = {produkt_id:{'nazwa': produkt.nazwa, 'cena':produkt.cena, 'znizka':produkt.znizka, 'kolory':kolory, 'ilosc':ilosc, 'zdjecie':produkt.zdjecie_1}}
+            SlownikPrzedmioty = {produkt_id:{'nazwa': produkt.nazwa, 'cena':produkt.cena, 'znizka':produkt.znizka, 'kolor':kolory, 'ilosc':ilosc, 'zdjecie':produkt.zdjecie_1, 'kolory': produkt.kolory}}
 
             if 'Koszyk' in session:
                 print(session['Koszyk'])
@@ -48,3 +48,30 @@ def getKoszyk():
         podatek = ("%.2f" % (.06 * float(suma)))
         lacznasuma = float("%.2f" % (1.06 * suma))
     return render_template('produkty/koszyk.html', podatek = podatek, lacznasuma = lacznasuma)
+
+@app.route('/wyczysc')
+def pusty_koszyk():
+    try:
+        session.clear()
+        return redirect(url_for('home'))
+    except Exception as e:
+        print(e)
+
+@app.route('/edytujkoszyk/<int:code>', methods=['POST'])
+def edytujkoszyk(code):
+    if 'Koszyk' not in session and len(session['Koszyk']) <= 0:
+       return redirect(url_for('home'))
+    if request.method == "POST":
+        ilosc = request.form.get('ilosc')
+        kolor = request.form.get('kolor')
+        try:
+            session.modified = True
+            for key, item in session['Koszyk'].items():
+                if int(key) == code:
+                    item['ilosc'] = ilosc
+                    item['kolor'] = kolor
+                    flash('Przedmiot został zaktualizowany!')
+                    return redirect(url_for('getKoszyk'))
+        except Exception as e:
+            print(e)
+            return redirect(url_for('getKoszyk'))
