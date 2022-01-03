@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 class dodajProdukt(db.Model):
+    __searchable__ = ['nazwa','opis']
     id = db.Column(db.Integer, primary_key=True)
     nazwa = db.Column(db.String(80), nullable=False)
     cena = db.Column(db.Numeric(10,2), nullable=False)

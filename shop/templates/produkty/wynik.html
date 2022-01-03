@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="container">
+    <div class="row">
+        {% for produkt in produkty %}
+        <div class="col-md-3 mt-3">
+            <div class="card">
+                <img src="{{url_for('static', filename='images/' + produkt.zdjecie_1)}}" alt="{{produkt.nazwa}}" class="card-img-top" height="200">
+                <div class="card-body">
+                    {% if produkt.znizka > 0 %}
+                    <h5 style="text-shadow: 1px 1px 2px #000; color: #F00; transform: rotate(-15deg); position:absolute; top:5%; left: 10%;"> Zniżka {{produkt.znizka}}%</h5>
+                    {% endif %}
+                    <h5 class="text-center">{{produkt.nazwa}}</h5>
+                    <p class="text-center">{{produkt.cena}},-</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('single_page', id=produkt.id)}}" class="float-left btn btn-sm btn-primary">Szczegóły</a> 
+                    <form action="{{url_for('DodajKoszyk')}}" method="post">
+                      <input type="hidden" name="produkt_id" value="{{produkt.id}}">
+                      <button type="submit" class="btn btn-sm btn-warning float-right">Dodaj do koszyka</button>
+                      <input type="hidden" name="ilosc" id="" value="1" min="1" max={{produkt.ilosc}}>
+                      {% set kolory = produkt.kolory.split(',') %}
+                      <select name="kolory" id="kolory" style="visibility: hidden;">
+                          {% for kolor in kolory %}
+                          {% set kol = kolor.split(':') %}
+                          <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
+                          {% endfor %}
+                      </select>
+                  </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+</div>
+
+{% endblock content %}
