@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h1 class="bg-info text-center">Rejestracja</h1>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <form action="" method="post">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-4">
+                {{render_field(form.dane, class="form-control")}}
+                {{render_field(form.login, class="form-control")}}
+                {{render_field(form.email, class="form-control")}}
+                {{render_field(form.haslo, class="form-control")}}
+                {{render_field(form.potwierdz, class="form-control")}}
+                {{form.profilowe()}}
+            </div>
+            <div class="col-md-4">
+                {{render_field(form.kraj, class="form-control")}}
+                {{render_field(form.miasto, class="form-control")}}
+                {{render_field(form.kontakt, class="form-control")}}
+                {{render_field(form.adres, class="form-control")}}
+                {{render_field(form.kodpocztowy, class="form-control")}}
+                {{form.zatwierdz(class="btn btn-sm btn-info float-right")}}
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock content %}

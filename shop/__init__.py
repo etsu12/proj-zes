@@ -22,3 +22,4 @@ search.init_app(app)
 from shop.admin import routes
 from shop.produkty import routes
 from shop.koszyk import koszyk
+from shop.klienci import routes
