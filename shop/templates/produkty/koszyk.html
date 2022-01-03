@@ -14,7 +14,7 @@
                 <th>Kolor</th>
                 <th>Cena</th>
                 <th>Ilość</th>
-                <th>Zniżka za całość</th>
+                <th>Zniżka</th>
                 <th>Suma</th>
                 <th>Edytuj</th>
                 <th>Usuń</th>
@@ -51,16 +51,21 @@
                     <td>{{"%0.2f"|format((suma|float) - znizka|float)}},-</td>
                     <td><button type="submit" class="btn btn-sm btn-info">Edytuj</button></td>
                 </form>
-                    <td><a href="#">Usuń</a></td>
+                    <td><a href="{{url_for('usunprzedmiot', id=key)}}" class="btn btn-sm btn-danger">Usuń</a></td>
                 </tr>
                 {% endfor %}
+            </tbody>
+            </table>
+                <table class="table table-sm">
                 <tr>
                     <td></td>
-                    <td><a href="/">Kontynuuj zakupy</a></td>
-                    <td colspan="3"><h5>Podatek: {{podatek}}</h5></td>
-                    <td colspan="4"><h4>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{{lacznasuma}},-</h4></td>
+                    <td><a href="/" class="btn btn-success">Przejdź dalej</a></td>
+                    <td width="35%"></td>
+                    <td><h5>Podatek: {{podatek}}</h5></td>
+                    <td><h4>{{lacznasuma}},-</h4></td>
+                    <td> <a href="{{url_for('wyczysckoszyk')}}" class="btn btn-danger btn-sm float-right mr-2">Wyczyść</a> </td>
                 </tr>
-            </tbody>
+            
         </table>
     </div>
 </div>

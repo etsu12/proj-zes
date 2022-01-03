@@ -4,38 +4,38 @@ from .models import Marka, Kategoria, dodajProdukt
 from .forms import dodajProdukty
 import secrets, os
 
+def marki():
+    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
+    return marki
+
+def kategorie():
+    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
+    return kategorie
+
 @app.route('/')
 def home():
     page = request.args.get('page',1,type=int)
     produkty = dodajProdukt.query.filter(dodajProdukt.ilosc > 0).order_by(dodajProdukt.id.desc()).paginate(page=page, per_page=8)
-    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
-    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
-    return render_template('produkty/index.html', produkty=produkty, marki=marki, kategorie=kategorie)
+    return render_template('produkty/index.html', produkty=produkty, marki=marki(), kategorie=kategorie())
 
 @app.route('/produkt/<int:id>')
 def single_page(id):
     produkt = dodajProdukt.query.get_or_404(id)
-    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
-    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
-    return render_template('produkty/single_page.html', produkt=produkt, marki=marki, kategorie=kategorie)
+    return render_template('produkty/single_page.html', produkt=produkt, marki=marki(), kategorie=kategorie())
 
 @app.route('/marka/<int:id>')
 def get_marka(id):
     get_m = Marka.query.filter_by(id=id).first_or_404()
     page = request.args.get('page', 1, type=int)
     marka = dodajProdukt.query.filter_by(marka=get_m).paginate(page=page, per_page=6)
-    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
-    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
-    return render_template('produkty/index.html', marka=marka, marki=marki, kategorie=kategorie, get_m=get_m)
+    return render_template('produkty/index.html', marka=marka, marki=marki(), kategorie=kategorie(), get_m=get_m)
 
 @app.route('/kategorie/<int:id>')
 def get_kategoria(id):
     page = request.args.get('page',1,type=int)
     get_kat = Kategoria.query.filter_by(id=id).first_or_404()
     getkat_prod = dodajProdukt.query.filter_by(kategoria=get_kat).paginate(page=page, per_page=6)
-    marki = Marka.query.join(dodajProdukt, (Marka.id == dodajProdukt.marka_id)).all()
-    kategorie = Kategoria.query.join(dodajProdukt, (Kategoria.id == dodajProdukt.kategoria_id)).all()
-    return render_template('produkty/index.html', getkat_prod=getkat_prod, kategorie=kategorie, marki=marki, get_kat=get_kat)
+    return render_template('produkty/index.html', getkat_prod=getkat_prod, kategorie=kategorie(), marki=marki(), get_kat=get_kat)
 
 @app.route('/dodajmarke', methods=['GET','POST'])
 def dodajmarke():

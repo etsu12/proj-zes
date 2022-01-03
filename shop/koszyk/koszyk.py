@@ -1,6 +1,7 @@
 from flask import redirect, render_template, url_for, flash, request, session, current_app
 from shop import db, app, photos
 from shop.produkty.models import dodajProdukt
+from shop.produkty.routes import marki, kategorie
 
 
 def MergeSlowniki(slownik1, slownik2):
@@ -14,7 +15,7 @@ def MergeSlowniki(slownik1, slownik2):
 def DodajKoszyk():
     try:
         produkt_id = request.form.get('produkt_id')
-        ilosc = request.form.get('ilosc')
+        ilosc = int(request.form.get('ilosc'))
         kolory = request.form.get('kolory')
         produkt = dodajProdukt.query.filter_by(id=produkt_id).first()
         if produkt_id and ilosc and kolory and request.method == "POST":
@@ -23,7 +24,10 @@ def DodajKoszyk():
             if 'Koszyk' in session:
                 print(session['Koszyk'])
                 if produkt_id in session['Koszyk']:
-                    print("Ten produkt już jest w twoim koszyku")
+                    for key, item in session['Koszyk'].items():
+                        if int(key) == int(produkt_id):
+                            session.modified = True
+                            item['ilosc'] += 1
                 else:
                      session['Koszyk'] = MergeSlowniki( session['Koszyk'], SlownikPrzedmioty)
                      return redirect(request.referrer)
@@ -37,8 +41,8 @@ def DodajKoszyk():
 
 @app.route('/koszyk')
 def getKoszyk():
-    if 'Koszyk' not in session:
-        return redirect(request.referrer)
+    if 'Koszyk' not in session or len(session['Koszyk']) <= 0:
+        return redirect(url_for('home'))
     suma = 0
     lacznasuma = 0
     for key, produkt in session['Koszyk'].items():
@@ -47,7 +51,7 @@ def getKoszyk():
         suma -= znizka
         podatek = ("%.2f" % (.06 * float(suma)))
         lacznasuma = float("%.2f" % (1.06 * suma))
-    return render_template('produkty/koszyk.html', podatek = podatek, lacznasuma = lacznasuma)
+    return render_template('produkty/koszyk.html', podatek = podatek, lacznasuma = lacznasuma, marki=marki(), kategorie=kategorie())
 
 @app.route('/wyczysc')
 def pusty_koszyk():
@@ -59,7 +63,7 @@ def pusty_koszyk():
 
 @app.route('/edytujkoszyk/<int:code>', methods=['POST'])
 def edytujkoszyk(code):
-    if 'Koszyk' not in session and len(session['Koszyk']) <= 0:
+    if 'Koszyk' not in session or len(session['Koszyk']) <= 0:
        return redirect(url_for('home'))
     if request.method == "POST":
         ilosc = request.form.get('ilosc')
@@ -75,3 +79,25 @@ def edytujkoszyk(code):
         except Exception as e:
             print(e)
             return redirect(url_for('getKoszyk'))
+
+@app.route('/usunprzedmiot/<int:id>')
+def usunprzedmiot(id):
+    if 'Koszyk' not in session or len(session['Koszyk']) <= 0:
+        return redirect(url_for('home'))
+    try:
+        session.modified = True
+        for key, item in session['Koszyk'].items():
+            if int(key) == id:
+                session['Koszyk'].pop(key, None)
+                return redirect(url_for('getKoszyk'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('getKoszyk'))
+
+@app.route('/wyczysckoszyk')
+def wyczysckoszyk():
+    try:
+        session.pop('Koszyk', None)
+        return redirect(url_for('home'))
+    except Exception as e:
+        print(e)
