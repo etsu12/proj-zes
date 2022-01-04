@@ -9,11 +9,11 @@
         <div class="col-md-4">
     <div class="text-center h1 text-white bg-primary p-2">Logowanie</div>
     {% include '_messages.html' %}
-    <form method="post" enctype="multipart/form-data">
+    <form method="post">
         {{ form.csrf_token }}
             <dl>
                 {{ render_field(form.email, class="form-control") }}
-                {{ render_field(form.password, class="form-control") }}
+                {{ render_field(form.haslo, class="form-control") }}
             </dl>
         <p><input type=submit value="Zaloguj" class="btn btn-info mt-2"></p>
     </form>

@@ -37,6 +37,21 @@
             <li class="nav-item">
               <a class="nav-link" href="{{url_for('getKoszyk')}}" tabindex="-1">Koszyk ({{session['Koszyk']|length}})</a>
             </li>
+            {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a href="#" class="nav-link">{{current_user.login}}</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{url_for('klient_wyloguj')}}" class="nav-link">Wyloguj</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a href="{{url_for('klientLogin')}}" class="nav-link">Zaloguj</a>
+            </li>
+            <li class="nav-item">
+              <a href="{{url_for('klient_rejestracja')}}" class="nav-link">Zarejestruj</a>
+            </li>
+            {% endif %}
           </ul>
           <form class="form-inline my-2 my-lg-0" action="{{url_for('wynik')}}">
             <input class="form-control mr-sm-2" type="search" placeholder="Szukaj" aria-label="Search" name="q">
