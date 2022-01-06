@@ -6,42 +6,39 @@
     {% include '_messages.html' %}
     <div class="row">
         <div class="col-md-12">
+            Nr zamówienia: {{zamowienia.faktura}}
+            <br>
+            Status: {{zamowienia.status}}
+            <br>
+            Dane klienta: {{klient.dane}}
+            <br>
+            Email klienta: {{klient.email}}
+            <br>
+            Kontakt klienta: {{klient.kontakt}}
+            <br>
+            <br>
         <table class="table table-sm">
             <thead>
                 <th>Sr</th>
-                <th>Zdjęcie</th>
                 <th>Nazwa</th>
                 <th>Kolor</th>
                 <th>Cena</th>
                 <th>Ilość</th>
                 <th>Zniżka</th>
                 <th>Suma</th>
-                <th>Edytuj</th>
-                <th>Usuń</th>
             </thead>
             <tbody>
-                {% for key , produkt in session['Koszyk'].items() %}
+                {% for key , produkt in zamowienia.zamowienia.items() %}
                 {% set znizka = "%0.2f" |format((produkt.znizka/100) * produkt.cena|float * produkt.ilosc|float) %}
                 <tr>
                     <td>{{loop.index}}</td>
-                    <td><img src="{{url_for('static',filename='images/'+produkt.zdjecie)}}" alt="{{produkt.nazwa}}" width="50" height="45"></td>
                     <td>{{produkt.nazwa}}</td>
                     <form action="{{url_for('edytujkoszyk', code=key)}}" method="post">
-                    <td>
-                      {% set kolory = produkt.kolory.split(',') %}
-                      <label for="kolory">Kolory:</label>
-                      <select name="kolor" id="kolor">
-                          <option value="{{produkt.kolor}}" style="display: none;">{{produkt.kolor|capitalize}}</option>
-                         {% for kolor in kolory %}
-                         {% set kol = kolor.split(':') %}
-                         <option value="{{kol[0]}}">{{kol[0]|capitalize}}</option>
-                         {% endfor %}
-                      </select>
-                        
-
+                    <td> 
+                        {{produkt.kolor|capitalize}}                 
                     </td>
                     <td>{{produkt.cena}},-</td>
-                    <td><input type="number" name="ilosc" min="1" max="10" value="{{produkt.ilosc}}"></td>
+                    <td>{{produkt.ilosc}}</td>
                     {% if produkt.znizka > 0 %}
                     <td>{{produkt.znizka}}% &nbsp; = {{znizka}}</td>
                     {% else %}
@@ -49,9 +46,7 @@
                     {% endif %}
                     {% set suma = produkt.ilosc|int * produkt.cena|float %}
                     <td>{{"%0.2f"|format((suma|float) - znizka|float)}},-</td>
-                    <td><button type="submit" class="btn btn-sm btn-info">Edytuj</button></td>
                 </form>
-                    <td><a href="{{url_for('usunprzedmiot', id=key)}}" class="btn btn-sm btn-danger">Usuń</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -59,11 +54,11 @@
                 <table class="table table-sm">
                 <tr>
                     <td></td>
-                    <td><a href="{{url_for('get_zamowienie')}}" class="btn btn-success">Zamów</a></td>
+                    <td><a href="#" class="btn btn-success">Przejdź do kasy</a></td>
                     <td width="35%"></td>
-                    <td><h5>Podatek: {{podatek}}</h5></td>
-                    <td><h4>{{lacznasuma}},-</h4></td>
-                    <td> <a href="{{url_for('wyczysckoszyk')}}" class="btn btn-danger btn-sm float-right mr-2">Wyczyść</a> </td>
+                    <td><h5>Podatek: {{podatek}},-</h5></td>
+                    <td><h4>Suma: {{sumaCalosc}},-</h4></td>
+                    <td> <a href="#" class="btn btn-danger btn-sm float-right mr-2">PDF</a> </td>
                 </tr>
             
         </table>
