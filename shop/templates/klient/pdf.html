@@ -1,12 +1,21 @@
-{% extends 'layout.html' %}
-{% block content %}
-{% include 'navbar.html' %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Pobierz PDF</title>
+  </head>
+  <body>
 <div class="container mt-4">
     {% include '_messages.html' %}
     <div class="row">
         <div class="col-md-12">
-            Nr zamówienia: {{zamowienia.faktura}}
+            <b style="float: right;">Nr zamówienia: {{zamowienia.faktura}}</b>
             <br>
             Status: {{zamowienia.status}}
             <br>
@@ -54,19 +63,19 @@
                 <table class="table table-sm">
                 <tr>
                     <td></td>
-                    <td><a href="#" class="btn btn-success">Przejdź do kasy</a></td>
                     <td width="35%"></td>
                     <td><h5>Podatek: {{podatek}},-</h5></td>
                     <td><h4>Suma: {{sumaCalosc}},-</h4></td>
-                    <td>
-                            <form action="{{url_for('get_pdf', faktura=zamowienia.faktura)}}" method="post">
-                            <button type="submit" class="btn btn-info btn-sm float-right mr-2">Pobierz PDF</button>
-                        </form>
-                    </td>    
                 </tr>
             
         </table>
     </div>
 </div>
 </div>
-{% endblock content %}
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>

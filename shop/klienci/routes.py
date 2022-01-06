@@ -1,10 +1,11 @@
-from flask import redirect, render_template, url_for, flash, request, session, current_app
+from flask import redirect, render_template, url_for, flash, request, session, current_app, make_response
 from flask_login import login_required, current_user, logout_user, login_user
 from shop import db, app, photos, search, bcrypt, login_manager
 from .forms import KlientRejestracjaForm, KlientLoginForm
 from .model import KlientZamowienie, Rejestracja
 import secrets, os
 import json
+import pdfkit
 
 @app.route('/klient/rejestracja', methods=['GET','POST'])
 def klient_rejestracja():
@@ -78,3 +79,29 @@ def zamowienia(faktura):
     else:
         return redirect(url_for('klientLogin'))
     return render_template('klient/zamowienie.html', faktura=faktura, podatek=podatek, sumaCzesc=sumaCzesc, sumaCalosc=sumaCalosc, klient=klient, zamowienia=zamowienia)
+
+@app.route('/get_pdf/<faktura>', methods=['POST'])
+@login_required
+def get_pdf(faktura):
+    if current_user.is_authenticated:
+        sumaCalosc = 0
+        sumaCzesc = 0
+        klient_id = current_user.id
+        config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+        if request.method == "POST":
+            klient = Rejestracja.query.filter_by(id=klient_id).first()
+            zamowienia = KlientZamowienie.query.filter_by(klient_id=klient_id).order_by(KlientZamowienie.id.desc()).first() # tylko jeden rekord
+            for _key, produkt in zamowienia.zamowienia.items():
+                znizka = (produkt['znizka']/100) * float(produkt['cena']) * float(produkt['ilosc'])
+                sumaCzesc += float(produkt['cena']) * int(produkt['ilosc'])
+                sumaCzesc -= znizka
+                podatek = ("%.2f" % (.06 * float(sumaCzesc)))
+                sumaCalosc = float("%.2f" % (1.06 * sumaCzesc))
+
+            rendered = render_template('klient/pdf.html', faktura=faktura, podatek=podatek, sumaCalosc=sumaCalosc, klient=klient, zamowienia=zamowienia)
+            pdf = pdfkit.from_string(rendered, False, configuration=config)
+            response = make_response(pdf)
+            response.headers['content-Type']='application/pdf'
+            response.headers['content-Disposition']='inline: filename='+faktura+'.pdf'
+            return response
+    return request(url_for('zamowienia'))
