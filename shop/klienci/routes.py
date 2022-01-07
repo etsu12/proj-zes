@@ -6,6 +6,36 @@ from .model import KlientZamowienie, Rejestracja
 import secrets, os
 import json
 import pdfkit
+import stripe
+
+publishable_key = 'pk_test_51KEzQQJbsOPtazjmDvqi5okBwviAIFg6TSg8FMyPnbnPKqqXcxLS0C6L7OOFAzGFIaNM98osOMqhSwsFlJG9eV9l00Fg3IM3lr'
+
+stripe.api_key = 'sk_test_51KEzQQJbsOPtazjmZY7On3s9L4x2tnnvQH7ABqUh3ObLllLGQRRmT3LVAIMXPq4vsEO6WJBlEJr8QEZ7cuH01EGB00I3uSXrJL'
+
+@app.route('/platnosc', methods=['POST'])
+@login_required
+def platnosc():
+    faktura = request.form.get('faktura')
+    ilosc = request.form.get('ilosc')
+    customer = stripe.Customer.create(
+        email=request.form['stripeEmail'],
+        source=request.form['stripeToken'],
+    )
+
+    charge = stripe.Charge.create(
+        customer=customer.id,
+        description='Płatność kartą',
+        amount=ilosc,
+        currency='pln',
+    )
+    zamowienia = KlientZamowienie.query.filter_by(klient_id=current_user.id, faktura=faktura).order_by(KlientZamowienie.id.desc()).first()
+    zamowienia.status = 'Zapłacone'
+    db.session.commit()
+    return redirect(url_for('dziekujemy'))
+
+@app.route('/dziekujemy')
+def dziekujemy():
+    return render_template('klient/dziekujemy.html')
 
 @app.route('/klient/rejestracja', methods=['GET','POST'])
 def klient_rejestracja():
@@ -42,12 +72,22 @@ def klient_wyloguj():
     logout_user()
     return redirect(url_for('home'))
 
+#usuniecie niepotrzebnych rzeczy z koszyka
+def aktualizujkoszyk():
+    for _key, product in session['Koszyk'].items():
+        session.modified = True
+        del product['zdjecie']
+        del product['kolory']
+    return aktualizujkoszyk
+
+
 @app.route('/getzamowienie')
 @login_required
 def get_zamowienie():
     if current_user.is_authenticated:
         klient_id = current_user.id
         faktura = secrets.token_hex(5)
+        aktualizujkoszyk()
         try:
             zamowienie = KlientZamowienie(faktura=faktura, klient_id=klient_id, zamowienia=session['Koszyk'])
             db.session.add(zamowienie)
@@ -74,7 +114,7 @@ def zamowienia(faktura):
             sumaCzesc += float(produkt['cena']) * int(produkt['ilosc'])
             sumaCzesc -= znizka
             podatek = ("%.2f" % (.06 * float(sumaCzesc)))
-            sumaCalosc = float("%.2f" % (1.06 * sumaCzesc))
+            sumaCalosc = ("%.2f" % (1.06 * float(sumaCzesc)))
 
     else:
         return redirect(url_for('klientLogin'))
@@ -90,13 +130,13 @@ def get_pdf(faktura):
         config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
         if request.method == "POST":
             klient = Rejestracja.query.filter_by(id=klient_id).first()
-            zamowienia = KlientZamowienie.query.filter_by(klient_id=klient_id).order_by(KlientZamowienie.id.desc()).first() # tylko jeden rekord
+            zamowienia = KlientZamowienie.query.filter_by(klient_id=klient_id, faktura=faktura).order_by(KlientZamowienie.id.desc()).first() # tylko jeden rekord
             for _key, produkt in zamowienia.zamowienia.items():
                 znizka = (produkt['znizka']/100) * float(produkt['cena']) * float(produkt['ilosc'])
                 sumaCzesc += float(produkt['cena']) * int(produkt['ilosc'])
                 sumaCzesc -= znizka
                 podatek = ("%.2f" % (.06 * float(sumaCzesc)))
-                sumaCalosc = float("%.2f" % (1.06 * sumaCzesc))
+                sumaCalosc = ("%.2f" % (1.06 * float(sumaCzesc)))
 
             rendered = render_template('klient/pdf.html', faktura=faktura, podatek=podatek, sumaCalosc=sumaCalosc, klient=klient, zamowienia=zamowienia)
             pdf = pdfkit.from_string(rendered, False, configuration=config)

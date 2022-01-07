@@ -53,8 +53,27 @@
             </table>
                 <table class="table table-sm">
                 <tr>
-                    <td></td>
-                    <td><a href="#" class="btn btn-success">Przejdź do kasy</a></td>
+                    <td>
+                        {% if zamowienia.status == 'Zapłacone' %}
+                        {% else %}
+                        <form action="{{url_for('platnosc')}}" method="POST">
+                        {% set ilosc = sumaCalosc.replace('.','') %}
+                        <input type="hidden" name="ilosc" value="{{ilosc}}">
+                        <input type="hidden" name="faktura" value="{{zamowienia.faktura}}">
+                        <script
+                          src="https://checkout.stripe.com/checkout.js"
+                          class="stripe-button"                    
+                          data-key="pk_test_51KEzQQJbsOPtazjmDvqi5okBwviAIFg6TSg8FMyPnbnPKqqXcxLS0C6L7OOFAzGFIaNM98osOMqhSwsFlJG9eV9l00Fg3IM3lr"
+                          data-locale: "pl"
+                          data-label="Zapłać kartą"
+                          data-name="Zapłać"
+                          data-description="Płatność kartą"
+                          data-amount="{{ilosc}}"
+                          data-currency="pln">
+                        </script>
+                      </form>
+                      {% endif %}
+                    </td>
                     <td width="35%"></td>
                     <td><h5>Podatek: {{podatek}},-</h5></td>
                     <td><h4>Suma: {{sumaCalosc}},-</h4></td>
